@@ -1,8 +1,11 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import guestRoutes from '@/router/routes/guest-routes';
+import userRoutes from '@/router/routes/user-routes';
 import { GlobalStyles } from '@mui/material';
 
-const router = createBrowserRouter([...guestRoutes]);
+const isAuthenticated = false;
+
+const router = createBrowserRouter(isAuthenticated ? [...userRoutes] : [...guestRoutes]);
 
 const AppRouter = () => {
     return (
@@ -18,4 +21,5 @@ const AppRouter = () => {
         </>
     );
 };
+
 export default AppRouter;
