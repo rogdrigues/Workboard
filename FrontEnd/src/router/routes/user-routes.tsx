@@ -2,7 +2,7 @@ import UserLayout from '@/router/layouts/user-layout';
 import ProtectedRoute from '@/router/guards/protected-route';
 import { Navigate } from 'react-router-dom';
 
-const isAuthenticated = true; //Will replaced with redux store
+const isAuthenticated = true;
 
 const userRoutes = [
     {
