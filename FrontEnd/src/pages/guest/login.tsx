@@ -10,11 +10,16 @@ import EnergySavingsLeafIcon from '@mui/icons-material/EnergySavingsLeaf';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { height100vh, BoxLogin, formInput, fieldInput, headerForm, subtitleForm, loginButton, logoLoginCover, height100 } from '@/styles';
+import { useToast } from '@/context/ToastContext';
+import { useAppDispatch } from '@/hooks/redux-hooks';
+import { loginUser } from '@/redux/thunks/authThunks';
 
 const UserAuthForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { triggerToast } = useToast();
+    const dispatch = useAppDispatch();
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -23,6 +28,13 @@ const UserAuthForm = () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
+        const result = await dispatch(loginUser({ email, password }));
+
+        if (loginUser.fulfilled.match(result)) {
+            triggerToast('Sign in successful', true);
+        } else {
+            triggerToast('There was an error while signing in', false);
+        }
     };
 
     return (
