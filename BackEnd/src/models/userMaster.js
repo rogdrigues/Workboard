@@ -16,7 +16,7 @@ const userMasterSchema = new mongoose.Schema(
             location: { type: String },
             avatar: { type: String },
         },
-
+        status: { type: String, enum: ['Active', 'Inactive'], default: 'Inactive' },
         refreshToken: { type: String },
         lastLogin: { type: Date },
     },
