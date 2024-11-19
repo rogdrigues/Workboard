@@ -1,4 +1,4 @@
-import { ToastProvider } from '@/context/ToastContext';
+import { ToastProvider } from '@/context';
 import { ReactNode } from 'react';
 
 export const ToastManager = ({ children }: { children: ReactNode }) => {
