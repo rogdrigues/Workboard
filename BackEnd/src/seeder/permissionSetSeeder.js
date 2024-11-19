@@ -10,42 +10,48 @@ const seedPermissions = async () => {
             {
                 roleName: 'Admin',
                 permissions: [
-                    'view_all_data', // View all system data
-                    'view_users', // View user information
-                    'view_bubbles', // View all bubbles (workspaces)
-                    'view_tasks', // View all tasks
-                    'view_dashboard', // View overall dashboard
+                    'view_all_data',         // View all system data
+                    'manage_users',          // Manage users (add, delete, edit)
+                    'manage_roles',          // Manage roles
+                    'view_audit_logs',       // View system audit logs
+                    'manage_settings',       // Manage all system settings
+                    'view_dashboard',        // View dashboard overview
                 ],
             },
             {
                 roleName: 'Manager',
                 permissions: [
-                    'create_bubble', // Create a new bubble (workspace)
-                    'invite_users', // Invite users to a bubble
-                    'manage_bubble', // Manage the bubble (e.g., members, settings)
-                    'create_task', // Create tasks within the bubble
-                    'edit_task', // Edit any task within the bubble
-                    'delete_task', // Delete tasks within the bubble
-                    'view_dashboard', // View the dashboard for the bubble
+                    'create_bubble',         // Create a new Bubble
+                    'manage_bubble',         // Manage Bubble (members, settings)
+                    'invite_users',          // Invite users to Bubble
+                    'view_bubble_dashboard', // View Bubble Dashboard
+                    'create_task',           // Create a new task
+                    'edit_task',             // Edit task in Bubble
+                    'delete_task',           // Delete task in Bubble
+                    'assign_task',           // Assign task to user
+                    'view_bubble_data',      // View Bubble data
                 ],
             },
             {
                 roleName: 'User',
                 permissions: [
-                    'view_assigned_tasks', // View tasks assigned to them
-                    'edit_assigned_tasks', // Edit tasks directly related to them
-                    'view_bubble_data', // View data within the bubble they are part of
+                    'view_assigned_tasks',   // View assigned tasks
+                    'edit_assigned_tasks',   // Edit tasks related to oneself
+                    'view_bubble_data',      // View data in Bubble
+                    'view_notifications',    // Receive notifications
                 ],
             },
             {
                 roleName: 'Reviewer',
                 permissions: [
-                    'review_task', // Review tasks within the bubble
-                    'approve_task', // Approve tasks after review
-                    'view_bubble_data', // View data within the bubble
+                    'review_task',           // Review task in Bubble
+                    'approve_task',          // Approve task after review
+                    'view_bubble_data',      // View data in Bubble
+                    'view_bubble_dashboard', // View Bubble dashboard
                 ],
             },
         ];
+
 
         // Insert the roles into the database
         await PermissionSet.insertMany(roles);

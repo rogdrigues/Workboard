@@ -2,18 +2,9 @@ import React from 'react';
 import { Drawer, List, ListItemIcon, ListItemText, Typography, Divider, ListItemButton } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
-import ApartmentIcon from '@mui/icons-material/Apartment';
 import PeopleIcon from '@mui/icons-material/People';
 import WorkIcon from '@mui/icons-material/Work';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DevicesIcon from '@mui/icons-material/Devices';
-import StorageIcon from '@mui/icons-material/Storage';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import CategoryIcon from '@mui/icons-material/Category';
-import ShowChartIcon from '@mui/icons-material/ShowChart';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import PlanIcon from '@mui/icons-material/Receipt';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSidebar } from '@/context';
 import { useAppSelector } from '@/hooks/redux-hooks';
@@ -23,47 +14,69 @@ const miniDrawerWidth = 70;
 
 const menuItems = [
     {
-        section: 'Dashboard', items: [
-            { name: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard', tag: ['view_dashboard'] },
-        ]
+        section: 'Dashboard',
+        items: [
+            {
+                name: 'Dashboard',
+                icon: <DashboardIcon />,
+                path: '/dashboard',
+                tag: ['view_dashboard', 'view_bubble_dashboard'],
+                description: 'Accessible by Admin, Manager, and Reviewer.',
+            },
+        ],
     },
     {
-        section: 'Management', items: [
-            { name: 'Division', icon: <BusinessIcon />, path: '/division', tag: ['manage_division', 'view_division', 'view_division_profile'] },
-            { name: 'Department', icon: <ApartmentIcon />, path: '/department', tag: ['manage_department', 'view_department', 'view_department_profile'] },
-            { name: 'User', icon: <PeopleIcon />, path: '/user', tag: ['manage_users'] },
-        ]
+        section: 'Management',
+        items: [
+            {
+                name: 'Tasks',
+                icon: <AssignmentIcon />,
+                path: '/tasks',
+                tag: ['view_assigned_tasks', 'view_tasks', 'manage_tasks', 'edit_task', 'delete_task'],
+                description: 'Manage tasks or view tasks assigned to you.',
+            },
+            {
+                name: 'Bubbles',
+                icon: <BusinessIcon />,
+                path: '/bubbles',
+                tag: ['view_bubble_data', 'create_bubble', 'manage_bubble'],
+                description: 'Manage or view your Bubbles.',
+            },
+            {
+                name: 'Users',
+                icon: <PeopleIcon />,
+                path: '/users',
+                tag: ['view_users', 'manage_users'],
+                description: 'Accessible by Admin to manage users.',
+            },
+        ],
     },
     {
-        section: 'Projects', items: [
-            { name: 'Project', icon: <WorkIcon />, path: '/project', tag: ['manage_projects', 'view_projects'] },
-            { name: 'Project Review', icon: <WorkIcon />, path: '/project_review', tag: ['project_review'] },
-            { name: 'Category', icon: <CategoryIcon />, path: '/category', tag: ['manage_categories', 'view_categories'] },
-        ]
+        section: 'Component',
+        items: [
+            {
+                name: 'System Settings',
+                icon: <WorkIcon />,
+                path: '/settings',
+                tag: ['manage_settings'],
+                description: 'Only Admins can manage system settings.',
+            },
+        ],
     },
     {
-        section: 'Components', items: [
-            { name: 'Assumption', icon: <AssignmentIcon />, path: '/assumption', tag: ['manage_assumptions', 'view_assumptions'] },
-            { name: 'Checklist', icon: <CheckBoxIcon />, path: '/checklist', tag: ['manage_checklists', 'view_checklists'] },
-            { name: 'Technology', icon: <DevicesIcon />, path: '/technology', tag: ['manage_technology', 'view_technology'] },
-            { name: 'Resource', icon: <StorageIcon />, path: '/resource', tag: ['manage_resources', 'view_resources'] },
-            { name: 'Productivity', icon: <ShowChartIcon />, path: '/productivity', tag: ['manage_productivity', 'view_productivity'] },
-        ]
+        section: 'Document',
+        items: [
+        ],
     },
-    {
-        section: 'Documents', items: [
-            { name: 'Template', icon: <FileCopyIcon />, path: '/template', tag: ['manage_template', 'view_template'] },
-            { name: 'Opportunity', icon: <TrendingUpIcon />, path: '/opportunity', tag: ['manage_opportunity', 'view_opportunity'] },
-            { name: 'Presale Plan', icon: <PlanIcon />, path: '/presaleplan', tag: ['manage_presale_plan', 'view_presale_plan'] }
-        ]
-    }
 ];
+
+
 
 const Sidebar = () => {
     const location = useLocation();
     const { isSidebarOpen } = useSidebar();
     //@ts-ignore
-    const userPermissions = useAppSelector(state => state.auth?.role?.permissions || []);
+    const userPermissions = useAppSelector(state => state.auth?.user?.role?.permissions || []);
 
     const hasPermission = (tags: string[]) => {
         return tags.some(tag => userPermissions.includes(tag));
