@@ -13,6 +13,7 @@ import { height100vh, BoxLogin, formInput, fieldInput, headerForm, subtitleForm,
 import { useToast } from '@/context/ToastContext';
 import { useAppDispatch } from '@/hooks/redux-hooks';
 import { loginUser } from '@/redux/thunks/authThunks';
+import { useNavigate } from 'react-router-dom';
 
 const UserAuthForm = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +21,7 @@ const UserAuthForm = () => {
     const [password, setPassword] = useState('');
     const { triggerToast } = useToast();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -32,6 +34,9 @@ const UserAuthForm = () => {
 
         if (loginUser.fulfilled.match(result)) {
             triggerToast('Sign in successful', true);
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 2000);
         } else {
             triggerToast('There was an error while signing in', false);
         }
