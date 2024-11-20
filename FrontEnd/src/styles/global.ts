@@ -2,10 +2,10 @@ export const profileMenuStyle = {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
-    padding: '4px 8px',
+    padding: '6px',
     borderRadius: '8px',
     '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        backgroundColor: 'rgb(127 104 104 / 31%)',
         '.MuiAvatar-root, .MuiTypography-root': {
             color: 'rgba(0, 0, 0, 0.7)',
             transition: 'color 0.3s ease',
