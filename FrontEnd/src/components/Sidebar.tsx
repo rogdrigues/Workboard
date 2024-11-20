@@ -10,6 +10,10 @@ import {
     Box,
     IconButton,
     Avatar,
+    Menu,
+    Paper,
+    MenuList,
+    MenuItem,
 } from '@mui/material';
 import {
     PanoramaFishEye as PanoramaFishEyeIcon,
@@ -19,10 +23,15 @@ import {
     People as PeopleIcon,
     Assignment as AssignmentIcon,
     FilterFrames as FilterFramesIcon,
+    ArrowDropDown as ArrowDropDownIcon,
+    AccountBox as AccountBoxIcon,
+    Logout as LogoutIcon
 } from '@mui/icons-material';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux-hooks';
-import { profileMenuStyle } from '@/styles';
+import { flexBoxSpaceBetween, flexBoxSpaceBetweenWidthFull, profileMenuStyle } from '@/styles';
+import { logout } from '@/redux/slices/authSlice';
+import UserProfileModal from '@/pages/user/user/_component/profile/user-profile-dialoge';
 
 const drawerWidth = 260;
 const miniDrawerWidth = 70;
@@ -84,6 +93,10 @@ const Sidebar = () => {
     const location = useLocation();
     const [isPinned, setIsPinned] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [openProfile, setOpenProfile] = useState(false);
+    const dispatch = useAppDispatch();
+    const isMenuOpen = Boolean(anchorEl);
 
     const handleMouseEnter = () => {
         if (!isPinned) {
@@ -107,6 +120,14 @@ const Sidebar = () => {
         return tags.some((tag) => userPermissions.includes(tag));
     };
 
+    const handleProfileMenuOpen = (event: MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
     const getInitials = (fullName: string | undefined) => {
         if (!fullName) return '';
         const names = fullName.split(' ');
@@ -114,132 +135,192 @@ const Sidebar = () => {
         return initials;
     };
 
-    return (
-        <Drawer
-            id="sidebar"
+    const renderMenu = (
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+            }}
+            transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
             sx={{
-                width: isPinned ? drawerWidth : (isHovered ? drawerWidth : miniDrawerWidth),
-                flexShrink: 0,
-                transition: 'width 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column', // Ensures the layout is column-oriented
-                '& .MuiDrawer-paper': {
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    width: isPinned ? drawerWidth : (isHovered ? drawerWidth : miniDrawerWidth),
-                    transition: 'width 0.3s ease',
-                    boxSizing: 'border-box',
+                mt: '-15px',
+                '& .MuiPaper-root': {
+                    minWidth: '200px',
                 },
             }}
-            variant="permanent"
-            anchor="left"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
         >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '5rem', justifyContent: "space-around", whiteSpace: "nowrap" }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#000' }}>
-                    {isPinned ? "Workboard" : (isHovered ? "Workboard" : <span style={{ paddingLeft: "0.75rem" }}>WEB</span>)}
-                </Typography>
-                <Box
-                    sx={{
-                        display: { xs: 'none', md: 'flex' },
-                        alignItems: 'center',
-                    }}
-                >
-                    <IconButton
-                        onClick={handleTogglePin}
-                        edge="start"
-                        color="inherit"
-                        aria-label="pin sidebar"
-                        sx={{ borderRadius: '50%' }}
+            <Paper>
+                <MenuList>
+                    <MenuItem onClick={() => {
+                        handleMenuClose();
+                        setOpenProfile(true);
+                    }}>
+                        <ListItemIcon>
+                            <AccountBoxIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Profile</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={handleMenuClose}>
+                        <ListItemIcon>
+                            <FilterFramesIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Branch</ListItemText>
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={() => {
+                        handleMenuClose();
+                        dispatch(logout());
+                    }}>
+                        <ListItemIcon>
+                            <LogoutIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>Logout</ListItemText>
+                    </MenuItem>
+                </MenuList>
+            </Paper>
+        </Menu>
+    );
+
+    return (
+        <>
+            <Drawer
+                id="sidebar"
+                sx={{
+                    width: isPinned ? drawerWidth : (isHovered ? drawerWidth : miniDrawerWidth),
+                    flexShrink: 0,
+                    transition: 'width 0.3s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    '& .MuiDrawer-paper': {
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        width: isPinned ? drawerWidth : (isHovered ? drawerWidth : miniDrawerWidth),
+                        transition: 'width 0.3s ease',
+                        boxSizing: 'border-box',
+                    },
+                }}
+                variant="permanent"
+                anchor="left"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '5rem', justifyContent: "space-around", whiteSpace: "nowrap" }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#000' }}>
+                        {isPinned ? "Workboard" : (isHovered ? "Workboard" : <span style={{ paddingLeft: "0.75rem" }}>WEB</span>)}
+                    </Typography>
+                    <Box
+                        sx={{
+                            display: { xs: 'none', md: 'flex' },
+                            alignItems: 'center',
+                        }}
                     >
-                        {!isPinned ? <PanoramaFishEyeIcon sx={{ color: '#000' }} /> : <RadioButtonCheckedIcon sx={{ color: '#000' }} />}
-                    </IconButton>
-                </Box>
-            </Box>
-
-            {/* This Box acts as the scrollable area */}
-            <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-                <List>
-                    {menuItems.map((section) => (
-                        <React.Fragment key={section.section}>
-                            <Typography
-                                variant="subtitle2"
-                                sx={{
-                                    paddingLeft: isPinned ? 2 : (isHovered ? 2 : 1),
-                                    paddingTop: 1,
-                                    paddingBottom: 1,
-                                    color: '#6c757d',
-                                    fontWeight: 'bold',
-                                    display: isPinned ? 'block' : (isHovered ? 'block' : 'none'),
-                                }}
-                            >
-                                {section.section}
-                            </Typography>
-
-                            {section.items.map((item) => (
-                                <ListItemButton
-                                    component={NavLink}
-                                    to={hasPermission(item.tag) ? item.path : '#'}
-                                    key={item.name}
-                                    selected={location.pathname.startsWith(item.path)}
-                                    disabled={!hasPermission(item.tag)}
-                                    sx={{
-                                        borderRadius: '8px',
-                                        marginX: 1,
-                                        paddingRight: 2,
-                                        '&.Mui-selected': {
-                                            backgroundColor: 'rgba(115, 103, 240, 0.15)',
-                                            color: '#000',
-                                            '& .MuiListItemIcon-root': {
-                                                color: '#7367F0',
-                                            },
-                                        },
-                                        '&:hover': {
-                                            backgroundColor: hasPermission(item.tag) ? 'rgba(115, 103, 240, 0.08)' : 'inherit',
-                                            transition: 'background-color 0.3s ease',
-                                        },
-                                        '&.Mui-disabled': {
-                                            opacity: 0.5,
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-                                    <ListItemText
-                                        primary={item.name}
-                                        sx={{
-                                            color: 'black',
-                                            display: isPinned ? 'block' : (isHovered ? 'block' : 'none'),
-                                            transition: 'display 0.3s ease',
-                                        }}
-                                    />
-                                </ListItemButton>
-                            ))}
-                            <Divider sx={{ marginY: 1 }} />
-                        </React.Fragment>
-                    ))}
-                </List>
-            </Box>
-
-            {/* Fixed user info at the bottom of the sidebar */}
-            <div style={{ padding: '6px', backgroundColor: "#dfeaeb9e", borderRadius: "4px" }}>
-                <Box sx={profileMenuStyle}>
-                    <Avatar sx={{ bgcolor: 'primary.main' }}>
-                        {/* You can replace with user image if available */}
-                        {getInitials('Quac')}
-                    </Avatar>
-                    <Box sx={{ textAlign: 'left', ml: 1 }}>
-                        <Typography variant="body1" sx={{ color: '#000', fontWeight: 'bold', transition: 'color 0.3s ease' }}>
-                            {isPinned ? 'Quac' : isHovered ? 'Quac' : ''}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#6E6B7B', transition: 'color 0.3s ease' }}>
-                            {isPinned ? 'Admin' : isHovered ? 'Admin' : ''}
-                        </Typography>
+                        <IconButton
+                            onClick={handleTogglePin}
+                            edge="start"
+                            color="inherit"
+                            aria-label="pin sidebar"
+                            sx={{ borderRadius: '50%' }}
+                        >
+                            {!isPinned ? <PanoramaFishEyeIcon sx={{ color: '#000' }} /> : <RadioButtonCheckedIcon sx={{ color: '#000' }} />}
+                        </IconButton>
                     </Box>
                 </Box>
-            </div>
-        </Drawer>
 
+                <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
+                    <List>
+                        {menuItems.map((section) => (
+                            <React.Fragment key={section.section}>
+                                <Typography
+                                    variant="subtitle2"
+                                    sx={{
+                                        paddingLeft: isPinned ? 2 : (isHovered ? 2 : 1),
+                                        paddingTop: 1,
+                                        paddingBottom: 1,
+                                        color: '#6c757d',
+                                        fontWeight: 'bold',
+                                        display: isPinned ? 'block' : (isHovered ? 'block' : 'none'),
+                                    }}
+                                >
+                                    {section.section}
+                                </Typography>
+
+                                {section.items.map((item) => (
+                                    <ListItemButton
+                                        component={NavLink}
+                                        to={hasPermission(item.tag) ? item.path : '#'}
+                                        key={item.name}
+                                        selected={location.pathname.startsWith(item.path)}
+                                        disabled={!hasPermission(item.tag)}
+                                        sx={{
+                                            borderRadius: '8px',
+                                            marginX: 1,
+                                            paddingRight: 2,
+                                            '&.Mui-selected': {
+                                                backgroundColor: 'rgba(115, 103, 240, 0.15)',
+                                                color: '#000',
+                                                '& .MuiListItemIcon-root': {
+                                                    color: '#7367F0',
+                                                },
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: hasPermission(item.tag) ? 'rgba(115, 103, 240, 0.08)' : 'inherit',
+                                                transition: 'background-color 0.3s ease',
+                                            },
+                                            '&.Mui-disabled': {
+                                                opacity: 0.5,
+                                            },
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+                                        <ListItemText
+                                            primary={item.name}
+                                            sx={{
+                                                color: 'black',
+                                                display: isPinned ? 'block' : (isHovered ? 'block' : 'none'),
+                                                transition: 'display 0.3s ease',
+                                            }}
+                                        />
+                                    </ListItemButton>
+                                ))}
+                                <Divider sx={{ marginY: 1 }} />
+                            </React.Fragment>
+                        ))}
+                    </List>
+                </Box>
+
+                <div style={{ padding: '6px', backgroundColor: "#dfeaeb9e", borderRadius: "4px" }}>
+                    <Box sx={profileMenuStyle}
+                        onClick={handleProfileMenuOpen}
+                    >
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Avatar sx={{ bgcolor: 'primary.main' }}>
+                                {getInitials('Quac')}
+                            </Avatar>
+                            <Box sx={{ textAlign: 'left', ml: 1 }}>
+                                <Typography variant="body1" sx={{ color: '#000', fontWeight: 'bold', transition: 'color 0.3s ease' }}>
+                                    {isPinned ? 'Quac' : isHovered ? 'Quac' : ''}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#6E6B7B', transition: 'color 0.3s ease' }}>
+                                    {isPinned ? 'Admin' : isHovered ? 'Admin' : ''}
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <IconButton>
+                            <ArrowDropDownIcon sx={{ color: '#9c27b0' }} />
+                        </IconButton>
+                    </Box>
+                </div>
+
+            </Drawer>
+            {renderMenu}
+            <UserProfileModal open={openProfile} setOpen={setOpenProfile} />
+        </>
     );
 };
 

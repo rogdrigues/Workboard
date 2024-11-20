@@ -12,6 +12,7 @@ export const profileMenuStyle = {
         }
     },
     transition: 'background-color 0.3s ease',
+    justifyContent: 'space-between',
 };
 
 export const resetFormat = {
